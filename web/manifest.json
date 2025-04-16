@@ -1,11 +1,11 @@
 {
-    "name": "salus_gym",
-    "short_name": "salus_gym",
+    "name": "Salus Gym",
+    "short_name": "Salus Gym",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Next-level gym management",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
