@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:salus_gym/data/local/sqlite/repositories/sqlite/appointment.dart';
 import 'package:salus_gym/schedule/appointment.dart';
 import 'package:salus_gym/schedule/day_calendar.dart';
 
@@ -12,46 +13,13 @@ class DayCalendarView extends StatefulWidget {
 
 class _DayCalendarViewState extends State<DayCalendarView> {
   DateTime selectedDate = DateTime.now();
+  late Future<List<Appointment>> futureAppointments;
 
-  List<Appointment> getAppointmentsForDate(DateTime date) {
-    final today = DateTime(date.year, date.month, date.day);
-    if (date.day == DateTime.now().day) {
-      return [
-        Appointment(
-          title: 'Reunião de Equipe',
-          startTime: today.add(const Duration(hours: 9)),
-          endTime: today.add(const Duration(hours: 10, minutes: 30)),
-          color: Colors.orange,
-        ),
-        Appointment(
-          title: 'Almoço com Cliente',
-          startTime: today.add(const Duration(hours: 12)),
-          endTime: today.add(const Duration(hours: 13)),
-          color: Colors.green,
-        ),
-        Appointment(
-          title: 'Desenvolvimento Feature X',
-          startTime: today.add(const Duration(hours: 14)),
-          endTime: today.add(const Duration(hours: 16)),
-          color: Colors.blue,
-        ),
-        Appointment(
-          title: 'Café Rápido',
-          startTime: today.add(
-            const Duration(hours: 15, minutes: 30),
-          ), // Sobreposição
-          endTime: today.add(const Duration(hours: 16, minutes: 15)),
-          color: Colors.purple,
-        ),
-        Appointment(
-          title: 'Planejamento Sprint',
-          startTime: today.add(const Duration(hours: 16, minutes: 30)),
-          endTime: today.add(const Duration(hours: 17, minutes: 30)),
-          color: Colors.redAccent,
-        ),
-      ];
-    }
-    return [];
+  @override
+  void initState() {
+    super.initState();
+    final repo = SqliteAppointmentRepository();
+    futureAppointments = repo.list();
   }
 
   void _goToPreviousDay() {
@@ -100,8 +68,22 @@ class _DayCalendarViewState extends State<DayCalendarView> {
           ),
         ),
         Expanded(
-          child: DayCalendar(
-            appointments: getAppointmentsForDate(selectedDate),
+          child: FutureBuilder<List<Appointment>>(
+            future: futureAppointments,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Erro ao carregar agenda'));
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text('Nenhuma entrada encontrada na agenda'),
+                );
+              }
+              return DayCalendar(appointments: snapshot.data!);
+            },
           ),
         ),
       ],
