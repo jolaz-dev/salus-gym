@@ -8,7 +8,7 @@ class DayCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hourHeight = 55.0; // altura por hora
+    final hourHeight = 70.0; // altura por hora
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -55,9 +55,10 @@ class DayCalendar extends StatelessWidget {
   List<Widget> _buildAppointments(double hourHeight, double width) {
     return appointments.map((appointment) {
       final startMinutes =
-          appointment.startTime.hour * 60 + appointment.startTime.minute;
+          appointment.startTimeLocal.hour * 60 +
+          appointment.startTimeLocal.minute;
       final endMinutes =
-          appointment.endTime.hour * 60 + appointment.endTime.minute;
+          appointment.endTimeLocal.hour * 60 + appointment.endTimeLocal.minute;
       final top = (startMinutes / 60) * hourHeight;
       final height = ((endMinutes - startMinutes) / 60) * hourHeight;
 

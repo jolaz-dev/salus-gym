@@ -12,26 +12,44 @@ class DayCalendarView extends StatefulWidget {
 }
 
 class _DayCalendarViewState extends State<DayCalendarView> {
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().copyWith(
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+    microsecond: 0,
+  );
   late Future<List<Appointment>> futureAppointments;
 
   @override
   void initState() {
     super.initState();
+    _loadAppointments(selectedDate);
+  }
+
+  void _loadAppointments(DateTime date) {
     final repo = SqliteAppointmentRepository();
-    futureAppointments = repo.list();
+    final beginStartTime = date.toUtc().millisecondsSinceEpoch;
+    final endStartTime =
+        date.add(Duration(days: 1)).toUtc().millisecondsSinceEpoch;
+
+    setState(() {
+      selectedDate = date;
+      futureAppointments = repo.listBetweenStartTimes(
+        beginStartTime,
+        endStartTime,
+      );
+    });
   }
 
   void _goToPreviousDay() {
-    setState(() {
-      selectedDate = selectedDate.subtract(Duration(days: 1));
-    });
+    final newDate = selectedDate.subtract(Duration(days: 1));
+    _loadAppointments(newDate);
   }
 
   void _goToNextDay() {
-    setState(() {
-      selectedDate = selectedDate.add(Duration(days: 1));
-    });
+    final newDate = selectedDate.add(Duration(days: 1));
+    _loadAppointments(newDate);
   }
 
   @override
