@@ -3,8 +3,13 @@ import 'package:salus_gym/schedule/appointment.dart';
 
 class DayCalendar extends StatelessWidget {
   final List<Appointment> appointments;
+  final void Function(Appointment)? onAppointmentTap;
 
-  const DayCalendar({super.key, required this.appointments});
+  const DayCalendar({
+    super.key,
+    required this.appointments,
+    this.onAppointmentTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +78,19 @@ class DayCalendar extends StatelessWidget {
             color: appointment.color.withOpacity(0.8),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Text(
-            appointment.title,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          child: TapRegion(
+            child: Text(
+              appointment.title,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            onTapInside: (_) {
+              if (onAppointmentTap != null) {
+                onAppointmentTap!(appointment);
+              }
+            },
           ),
         ),
       );

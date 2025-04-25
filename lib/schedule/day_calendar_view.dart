@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:salus_gym/data/local/sqlite/repositories/sqlite/appointment.dart';
 import 'package:salus_gym/schedule/appointment.dart';
+import 'package:salus_gym/schedule/appointment_form.dart';
 import 'package:salus_gym/schedule/day_calendar.dart';
 
 class DayCalendarView extends StatefulWidget {
@@ -12,18 +13,24 @@ class DayCalendarView extends StatefulWidget {
 }
 
 class _DayCalendarViewState extends State<DayCalendarView> {
-  DateTime selectedDate = DateTime.now().copyWith(
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0,
-    microsecond: 0,
-  );
+  late DateTime selectedDate;
+
+  DateTime _toStartOfDay(DateTime date) {
+    return date.copyWith(
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+  }
+
   late Future<List<Appointment>> futureAppointments;
 
   @override
   void initState() {
     super.initState();
+    selectedDate = _toStartOfDay(DateTime.now());
     _loadAppointments(selectedDate);
   }
 
@@ -52,6 +59,56 @@ class _DayCalendarViewState extends State<DayCalendarView> {
     _loadAppointments(newDate);
   }
 
+  Future<void> _createAppointment() async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder:
+          (context) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: AppointmentForm(
+              onSubmit: (appointment) async {
+                final repo = SqliteAppointmentRepository();
+                await repo.insert(appointment);
+                Navigator.of(context).pop(); // fecha o modal
+                _loadAppointments(selectedDate); // recarrega os compromissos
+              },
+              appointment: Appointment(
+                id: '',
+                title: '',
+                startTimeUtc: selectedDate.add(Duration(hours: 9)).toUtc(),
+                durationInMinutes: 60,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+    );
+  }
+
+  Future<void> _editAppointment(Appointment appointment) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder:
+          (context) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: AppointmentForm(
+              appointment: appointment,
+              onSubmit: (updated) async {
+                final repo = SqliteAppointmentRepository();
+                await repo.update(updated);
+                Navigator.of(context).pop();
+                _loadAppointments(_toStartOfDay(updated.startTimeLocal));
+              },
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formattedDate = DateFormat(
@@ -78,9 +135,17 @@ class _DayCalendarViewState extends State<DayCalendarView> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              IconButton(
-                icon: Icon(Icons.chevron_right),
-                onPressed: _goToNextDay,
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: _createAppointment,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right),
+                    onPressed: _goToNextDay,
+                  ),
+                ],
               ),
             ],
           ),
@@ -100,7 +165,10 @@ class _DayCalendarViewState extends State<DayCalendarView> {
                   child: Text('Nenhuma entrada encontrada na agenda'),
                 );
               }
-              return DayCalendar(appointments: snapshot.data!);
+              return DayCalendar(
+                appointments: snapshot.data!,
+                onAppointmentTap: _editAppointment,
+              );
             },
           ),
         ),
