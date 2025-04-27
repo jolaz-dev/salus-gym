@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:salus_gym/data/local/sqlite/repositories/sqlite/appointment.dart';
-import 'package:salus_gym/schedule/appointment.dart';
+import 'package:salus_gym/data/models/appointment.dart';
 import 'package:salus_gym/schedule/appointment_form.dart';
 import 'package:salus_gym/schedule/day_calendar.dart';
 
@@ -9,7 +9,7 @@ class DayCalendarView extends StatefulWidget {
   const DayCalendarView({super.key});
 
   @override
-  _DayCalendarViewState createState() => _DayCalendarViewState();
+  State<DayCalendarView> createState() => _DayCalendarViewState();
 }
 
 class _DayCalendarViewState extends State<DayCalendarView> {

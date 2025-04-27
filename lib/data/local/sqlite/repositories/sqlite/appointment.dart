@@ -1,7 +1,7 @@
 import 'package:salus_gym/core/utils/color_parser.dart';
 import 'package:salus_gym/data/local/sqlite/db.dart';
 
-import 'package:salus_gym/schedule/appointment.dart';
+import 'package:salus_gym/data/models/appointment.dart';
 
 class SqliteAppointmentRepository {
   Appointment _mapToAppointment(Map<String, Object?> map) {

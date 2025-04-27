@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:salus_gym/schedule/appointment.dart';
+import 'package:salus_gym/data/models/appointment.dart';
 
 class DayCalendar extends StatelessWidget {
   final List<Appointment> appointments;
@@ -75,7 +75,7 @@ class DayCalendar extends StatelessWidget {
           height: height,
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: appointment.color.withOpacity(0.8),
+            color: appointment.color.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(6),
           ),
           child: TapRegion(
