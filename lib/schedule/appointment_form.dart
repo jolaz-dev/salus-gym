@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:salus_gym/schedule/appointment.dart';
+import 'package:salus_gym/data/models/appointment.dart';
 import 'package:uuid/uuid.dart';
 
 class AppointmentForm extends StatefulWidget {
