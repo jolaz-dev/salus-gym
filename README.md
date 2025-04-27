@@ -9,7 +9,7 @@ This project is being mainly developed by [Jonathan Santos do Carmo Lazaro](http
 - Calendar control (WIP)
   - Planned to be available for Windows/Linux desktop software only, using SQLite
   - Creation and updating working
-  - Date persistence in GMT and exhibition in local time _seems_ to be working
+  - Date persistence in UTC and exhibition in local time _seems_ to be working
   - _It needs better visuals, probably_ 😅
 
 ## Planned features

@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:salus_gym/data/local/sqlite/migrations/20250422_initial.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class SqliteDB {
@@ -21,6 +22,8 @@ class SqliteDB {
     String dbPath = p.join(appDocumentsDir.path, "SalusGym", "salus_gym.db");
 
     var db = await databaseFactory.openDatabase(dbPath);
+
+    await db.execute(SQLiteMigration20250422Initial.sql);
     return db;
   }
 }
