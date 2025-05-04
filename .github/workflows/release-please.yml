@@ -37,7 +37,7 @@ jobs:
       - name: Zip Windows build
         run: |
           cd build\windows\x64\runner\Release
-          Compress-Archive -Path . -Destination salus_gym_windows_x64.zip
+          Compress-Archive -Path .\* -Destination salus_gym_windows_x64.zip
       - name: Add Artifact to Release
         env:
           GITHUB_TOKEN: ${{ secrets.GOD_MODE }}
@@ -62,8 +62,8 @@ jobs:
       - name: Zip Linux build
         run: |
           cd build/linux/x64/release/bundle
-          zip -r salus_gym_linux_x64.zip *
+          tar -czvf salus_gym_linux_x64.tar.gz *
       - name: Add Artifact to Release
         env:
           GITHUB_TOKEN: ${{ secrets.GOD_MODE }}
-        run: gh release upload ${{ needs.release_please.outputs.tag_name }} ./build/linux/x64/release/bundle/salus_gym_linux_x64.zip
+        run: gh release upload ${{ needs.release_please.outputs.tag_name }} ./build/linux/x64/release/bundle/salus_gym_linux_x64.tar.gz
