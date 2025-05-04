@@ -4,11 +4,13 @@ import 'package:salus_gym/data/models/appointment.dart';
 class DayCalendar extends StatelessWidget {
   final List<Appointment> appointments;
   final void Function(Appointment)? onAppointmentTap;
+  final void Function(Appointment)? onAppointmentLongPress;
 
   const DayCalendar({
     super.key,
     required this.appointments,
     this.onAppointmentTap,
+    this.onAppointmentLongPress,
   });
 
   @override
@@ -78,7 +80,7 @@ class DayCalendar extends StatelessWidget {
             color: appointment.color.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: TapRegion(
+          child: GestureDetector(
             child: Text(
               appointment.title,
               style: TextStyle(
@@ -86,9 +88,14 @@ class DayCalendar extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            onTapInside: (_) {
+            onTap: () {
               if (onAppointmentTap != null) {
                 onAppointmentTap!(appointment);
+              }
+            },
+            onLongPress: () {
+              if (onAppointmentLongPress != null) {
+                onAppointmentLongPress!(appointment);
               }
             },
           ),
