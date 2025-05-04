@@ -109,6 +109,34 @@ class _DayCalendarViewState extends State<DayCalendarView> {
     );
   }
 
+  void _onAppointmentLongPress(Appointment appointment) {
+    showModalBottomSheet(
+      context: context,
+      builder:
+          (context) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text('Excluir compromisso'),
+                  onTap: () async {
+                    Navigator.pop(context); // fecha o bottom sheet
+                    await SqliteAppointmentRepository().delete(appointment.id);
+                    _loadAppointments(
+                      _toStartOfDay(appointment.startTimeLocal),
+                    ); // atualiza a lista
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Compromisso excluído')),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formattedDate = DateFormat(
@@ -168,6 +196,7 @@ class _DayCalendarViewState extends State<DayCalendarView> {
               return DayCalendar(
                 appointments: snapshot.data!,
                 onAppointmentTap: _editAppointment,
+                onAppointmentLongPress: _onAppointmentLongPress,
               );
             },
           ),

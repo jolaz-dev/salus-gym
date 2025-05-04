@@ -39,6 +39,11 @@ class SqliteAppointmentRepository {
     return [for (final map in maps) _mapToAppointment(map)];
   }
 
+  Future delete(String id) async {
+    final db = await SqliteDB.instance;
+    await db.delete('appointment', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<void> insert(Appointment appointment) async {
     final db = await SqliteDB.instance;
     await db.insert('appointment', appointment.toMap());
